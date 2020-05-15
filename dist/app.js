@@ -59,7 +59,7 @@ var _App = function (_BaseComponent) {
     var _this = _possibleConstructorReturn(this, (_App.__proto__ || Object.getPrototypeOf(_App)).apply(this, arguments));
 
     _this.config = {
-      pages: ['pages/index/index'],
+      pages: ['pages/index/index', 'pages/index/person'],
       window: {
         backgroundTextStyle: 'light',
         navigationBarBackgroundColor: '#fff',

@@ -18,8 +18,6 @@ var _index2 = _interopRequireDefault(_index);
 
 var _index3 = require("../../npm/@tarojs/redux/index.js");
 
-var _home = require("../../actions/home.js");
-
 var _api = require("../../services/api.js");
 
 var _api2 = _interopRequireDefault(_api);
@@ -27,10 +25,6 @@ var _api2 = _interopRequireDefault(_api);
 var _inter = require("../../config/inter.js");
 
 var _inter2 = _interopRequireDefault(_inter);
-
-var _menu = require("../../config/menu.js");
-
-var _menu2 = _interopRequireDefault(_menu);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -54,8 +48,8 @@ var Index = (_temp2 = _class = function (_BaseComponent) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Index.__proto__ || Object.getPrototypeOf(Index)).call.apply(_ref, [this].concat(args))), _this), _this.$usedState = ["loopArray54", "personList", "home"], _this.config = {
-      navigationBarTitleText: '首页'
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Index.__proto__ || Object.getPrototypeOf(Index)).call.apply(_ref, [this].concat(args))), _this), _this.$usedState = ["name", "age", "personId", "type"], _this.config = {
+      navigationBarTitleText: '信息'
     }, _this.customComponents = [], _temp), _possibleConstructorReturn(_this, _ret);
   }
 
@@ -72,103 +66,133 @@ var Index = (_temp2 = _class = function (_BaseComponent) {
       */
 
       this.state = {
-        personList: []
+        name: '',
+        age: '',
+        personId: 0,
+        type: 0
       };
       this.$$refs = [];
     }
   }, {
     key: "componentWillReceiveProps",
-    value: function componentWillReceiveProps(nextProps) {
-      var home = nextProps.home;
+    value: function componentWillReceiveProps() {}
+  }, {
+    key: "componentWillMount",
+    value: function componentWillMount() {
+      var that = this;
+      var _that$$router$params = that.$router.params,
+          id = _that$$router$params.id,
+          name = _that$$router$params.name,
+          age = _that$$router$params.age,
+          type = _that$$router$params.type;
+
+      that.setState({
+        personId: parseInt(id),
+        name: name !== undefined ? name : '',
+        age: age !== undefined ? age : '',
+        type: type !== undefined ? parseInt(type) : 0
+      });
     }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {}
   }, {
     key: "componentDidMount",
-    value: function componentDidMount() {
-      var that = this;
-      that.props.getPerson();
-    }
+    value: function componentDidMount() {}
   }, {
     key: "componentDidShow",
-    value: function componentDidShow() {
-      var that = this;
-      that.getPerson();
-    }
+    value: function componentDidShow() {}
   }, {
     key: "componentDidHide",
     value: function componentDidHide() {}
   }, {
-    key: "getPerson",
-    value: function getPerson() {
+    key: "_add",
+    value: function _add() {
       var that = this;
-      _api2.default.get(_inter2.default.person).then(function (res) {
-        if (res.statusCode === 200) {
-          that.setState({
-            personList: res.data
+      var _that$state = that.state,
+          age = _that$state.age,
+          name = _that$state.name,
+          type = _that$state.type,
+          personId = _that$state.personId;
+
+      if (type === 0) {
+        _api2.default.post(_inter2.default.person, {
+          name: name,
+          age: age
+        }).then(function (res) {
+          _index2.default.showToast({
+            title: '提交成功',
+            icon: 'none',
+            duration: 1000
           });
-        }
-      });
-    }
-  }, {
-    key: "_onAdd",
-    value: function _onAdd() {
-      _index2.default.navigateTo({
-        url: _menu2.default.person + '?type=0'
-      });
-    }
-  }, {
-    key: "_onDelete",
-    value: function _onDelete() {}
-  }, {
-    key: "_onEdit",
-    value: function _onEdit(person, id) {
-      _index2.default.navigateTo({
-        url: _menu2.default.person + '?id=' + id + '&name=' + person.name + '&age=' + person.age + '&type=1'
-      });
+          setTimeout(function () {
+            _index2.default.navigateBack();
+          }, 1000);
+        });
+      } else {
+        _api2.default.post(_inter2.default.person + personId, {
+          name: name,
+          age: age
+        }).then(function (res) {
+          _index2.default.showToast({
+            title: '提交成功',
+            icon: 'none',
+            duration: 1000
+          });
+          setTimeout(function () {
+            _index2.default.navigateBack();
+          }, 1000);
+        });
+      }
     }
   }, {
     key: "_createData",
     value: function _createData() {
+      var _this2 = this;
+
       this.__state = arguments[0] || this.state || {};
       this.__props = arguments[1] || this.props || {};
       var __isRunloopRef = arguments[2];
       var __prefix = this.$prefix;
       ;
 
-      var personList = this.__state.personList;
+      var _state = this.__state,
+          name = _state.name,
+          age = _state.age;
 
-      var loopArray54 = personList.map(function (person, index) {
-        person = {
-          $original: (0, _index.internal_get_original)(person)
-        };
-        var $loopState__temp2 = 'person' + index;
-        return {
-          $loopState__temp2: $loopState__temp2,
-          $original: person.$original
-        };
-      });
-      Object.assign(this.__state, {
-        loopArray54: loopArray54
-      });
+
+      this.anonymousFunc0 = function (e) {
+        return _this2.setState({ name: e.detail.value });
+      };
+
+      this.anonymousFunc1 = function (e) {
+        return _this2.setState({ age: e.detail.value });
+      };
+
+      Object.assign(this.__state, {});
       return this.__state;
+    }
+  }, {
+    key: "anonymousFunc0",
+    value: function anonymousFunc0(e) {
+      ;
+    }
+  }, {
+    key: "anonymousFunc1",
+    value: function anonymousFunc1(e) {
+      ;
     }
   }]);
 
   return Index;
-}(_index.Component), _class.$$events = ["_onEdit", "_onDelete", "_onAdd"], _class.$$componentPath = "pages/index/index", _temp2);
+}(_index.Component), _class.$$events = ["anonymousFunc0", "anonymousFunc1", "_add"], _class.$$componentPath = "pages/index/person", _temp2);
 Index = (0, _tslib.__decorate)([(0, _index3.connect)(function (_ref2) {
   var home = _ref2.home;
   return {
     home: home
   };
 }, function (dispatch) {
-  return {
-    getPerson: function getPerson() {
-      dispatch((0, _home.getPerson)());
-    }
-  };
+  return {};
 })], Index);
 // #region 导出注意
 //

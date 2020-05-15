@@ -1,0 +1,1 @@
+export const GETPERSON : string = 'GETPERSON'

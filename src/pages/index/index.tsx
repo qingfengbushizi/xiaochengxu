@@ -1,10 +1,23 @@
 import { ComponentClass } from 'react'
-import Taro, { Component, Config } from '@tarojs/taro'
+import Taro, { Component, Config, navigateTo } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
+
 import { connect } from '@tarojs/redux'
+import { homeType } from '../../constants/homeType'
 
-import { add, minus, asyncAdd } from '../../actions/counter'
+import {
 
+    getPerson
+
+} from '../../actions/home'
+
+
+import api from '../../services/api'
+import inter from '../../config/inter'
+
+import menu from '../../config/menu'
+
+import  '../../config/theme.css';
 import './index.less'
 
 // #region 书写注意
@@ -18,20 +31,23 @@ import './index.less'
 // #endregion
 
 type PageStateProps = {
-  counter: {
-    num: number
-  }
+    home:homeType,
+    getPerson:Array<{}>
 }
 
 type PageDispatchProps = {
-  add: () => void
-  dec: () => void
-  asyncAdd: () => any
+    getPerson: () => void
 }
 
 type PageOwnProps = {}
 
-type PageState = {}
+type PageState = {
+    personList:Array<{
+        id:number,
+        name:string,
+        age:number
+    }>
+}
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 
@@ -39,20 +55,18 @@ interface Index {
   props: IProps;
 }
 
-@connect(({ counter }) => ({
-  counter
+@connect(({ home }) => ({
+    home:home
 }), (dispatch) => ({
-  add () {
-    dispatch(add())
-  },
-  dec () {
-    dispatch(minus())
-  },
-  asyncAdd () {
-    dispatch(asyncAdd())
-  }
+
+    getPerson () {
+      dispatch(getPerson())
+    }
+
 }))
-class Index extends Component {
+
+
+class Index extends Component<{}, PageState>{
 
     /**
    * 指定config的类型声明为: Taro.Config
@@ -62,30 +76,100 @@ class Index extends Component {
    * 提示和声明 navigationBarTextStyle: 'black' | 'white' 类型冲突, 需要显示声明类型
    */
     config: Config = {
-    navigationBarTitleText: '首页'
-  }
+        navigationBarTitleText: '首页'
+    }
 
-  componentWillReceiveProps (nextProps) {
-    console.log(this.props, nextProps)
-  }
+    constructor(){
+        super(...arguments)
 
-  componentWillUnmount () { }
+        this.state = {
+            personList:[]
+        }
+    }
 
-  componentDidShow () { }
+    componentWillReceiveProps (nextProps) {
+        const {home} = nextProps
+    }
 
-  componentDidHide () { }
 
-  render () {
-    return (
-      <View className='index'>
-        <Button className='add_btn' onClick={this.props.add}>+</Button>
-        <Button className='dec_btn' onClick={this.props.dec}>-</Button>
-        <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button>
-        <View><Text>{this.props.counter.num}</Text></View>
-        <View><Text>Hello, World1</Text></View>
-      </View>
-    )
-  }
+    componentWillUnmount () { }
+
+    componentDidMount(){
+        var that = this;
+        that.props.getPerson();
+    }
+
+    componentDidShow () { 
+        var that = this
+        that.getPerson();
+    }
+
+    componentDidHide () { }
+
+    getPerson(){
+        var that = this
+        
+        api.get(inter.person)
+        .then((res)=>{
+            if(res.statusCode === 200){
+                that.setState({
+                    personList:res.data
+                })
+            }
+        })
+
+    }
+
+
+    _onAdd(){
+        Taro.navigateTo({
+            url:menu.person + '?type=0'
+        })
+    }
+
+    _onDelete(){
+
+    }
+
+    _onEdit(person,id){
+        Taro.navigateTo({
+            url:menu.person + '?id=' + id + '&name=' + person.name + '&age=' + person.age + '&type=1'
+        })
+    }
+
+    render () {
+
+        const {personList} = this.state
+
+        return (
+            <View className='index'>
+                <View className='d_flex fd_c pl_20 pr_20'>
+                    <View className='d_flex fd_r '>
+                        <Text className='c33_label default_label pt_10 pb_10 col_1 textCenter'>{'姓名'}</Text>
+                        <Text className='c33_label default_label pt_10 pb_10 col_1 textCenter'>{'年龄'}</Text>
+                        <Text className='c33_label default_label pt_10 pb_10 col_1 textCenter'>{'修改'}</Text>
+                        <Text className='c33_label default_label pt_10 pb_10 col_1 textCenter'>{'操作'}</Text>
+                    </View> 
+                    {
+                      personList.map((person,index)=>{
+                          return(
+                              <View key = {'person' + index} className='d_flex fd_r ai_ct  '>
+                                  <Text className='c33_label default_label pt_10 pb_10 col_1 textCenter'>{person.name}</Text>
+                                  <Text className='c33_label default_label pt_10 pb_10 col_1 textCenter'>{person.age}</Text>
+                                  <Text className='c33_label default_label pt_10 pb_10 col_1 textCenter' onClick={this._onEdit.bind(this,person,person.id)}>{'编辑'}</Text>
+                                  <Text className='c33_label default_label pt_10 pb_10 col_1 textCenter' onClick={this._onDelete}>{'删除'}</Text>
+                              </View>
+                          )
+                      })
+                    }
+                </View>
+
+                <View className='btn bg_fa d_flex fd_r ai_ct jc_ct mt_20' onClick={this._onAdd}>
+                    <Text className='white_label default_label'>增加</Text>
+                </View>
+            </View>
+        )
+    }
 }
 
 // #region 导出注意
@@ -95,4 +179,4 @@ class Index extends Component {
 //
 // #endregion
 
-export default Index as ComponentClass<PageOwnProps, PageState>
+export default Index as unknown as ComponentClass<PageOwnProps, PageState>
