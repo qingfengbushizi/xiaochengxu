@@ -10,15 +10,9 @@ var _get = function get(object, property, receiver) { if (object === null) objec
 
 var _class, _temp2;
 
-var _tslib = require("../../npm/tslib/tslib.js");
-
 var _index = require("../../npm/@tarojs/taro-weapp/index.js");
 
 var _index2 = _interopRequireDefault(_index);
-
-var _index3 = require("../../npm/@tarojs/redux/index.js");
-
-var _home = require("../../actions/home.js");
 
 var _api = require("../../services/api.js");
 
@@ -40,6 +34,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var Anim = function Anim() {};
+Anim.prototype.start = function () {
+  console.log('satrt');
+};
+Anim.prototype.stop = function () {
+  console.log('stop');
+};
+var myAnim = new Anim();
+myAnim.start();
+myAnim.stop();
 var Index = (_temp2 = _class = function (_BaseComponent) {
   _inherits(Index, _BaseComponent);
 
@@ -54,7 +58,7 @@ var Index = (_temp2 = _class = function (_BaseComponent) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Index.__proto__ || Object.getPrototypeOf(Index)).call.apply(_ref, [this].concat(args))), _this), _this.$usedState = ["loopArray54", "personList", "home"], _this.config = {
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Index.__proto__ || Object.getPrototypeOf(Index)).call.apply(_ref, [this].concat(args))), _this), _this.$usedState = ["loopArray138", "loopArray139", "loopArray140", "loopArray141", "personList", "cate1", "cate2", "cate3", "home"], _this.config = {
       navigationBarTitleText: '首页'
     }, _this.customComponents = [], _temp), _possibleConstructorReturn(_this, _ret);
   }
@@ -72,7 +76,10 @@ var Index = (_temp2 = _class = function (_BaseComponent) {
       */
 
       this.state = {
-        personList: []
+        personList: [],
+        cate1: [],
+        cate2: [],
+        cate3: []
       };
       this.$$refs = [];
     }
@@ -88,27 +95,86 @@ var Index = (_temp2 = _class = function (_BaseComponent) {
     key: "componentDidMount",
     value: function componentDidMount() {
       var that = this;
-      that.props.getPerson();
+      // that.props.getPerson();
     }
   }, {
     key: "componentDidShow",
     value: function componentDidShow() {
       var that = this;
-      that.getPerson();
+      // that.getPerson();
+      that.getCate1();
     }
   }, {
     key: "componentDidHide",
     value: function componentDidHide() {}
+    // getPerson(){
+    //     var that = this
+    //     api.get(inter.person)
+    //     .then((res)=>{
+    //         if(res.statusCode === 200){
+    //             that.setState({
+    //                 personList:res.data
+    //             })
+    //         }
+    //     })
+    // }
+
   }, {
-    key: "getPerson",
-    value: function getPerson() {
+    key: "getCate1",
+    value: function getCate1() {
       var that = this;
-      _api2.default.get(_inter2.default.person).then(function (res) {
+      _api2.default.get(_inter2.default.cate1).then(function (res) {
         if (res.statusCode === 200) {
           that.setState({
-            personList: res.data
+            cate1: res.data
+          }, function () {
+            that._cate1(res.data[0]);
           });
         }
+      });
+    }
+    //一级分类             
+
+  }, {
+    key: "_cate1",
+    value: function _cate1(cate_1) {
+      var that = this;
+      _api2.default.get(_inter2.default.cate2, {
+        catalog1Id: cate_1.id
+      }).then(function (res) {
+        if (res.statusCode === 200) {
+          that.setState({
+            cate2: res.data
+          }, function () {
+            that._cate2(res.data[0]);
+          });
+        }
+      });
+    }
+    // 二级分类
+
+  }, {
+    key: "_cate2",
+    value: function _cate2(cate_2) {
+      var that = this;
+      _api2.default.get(_inter2.default.cate3, {
+        catalog2Id: cate_2.id
+      }).then(function (res) {
+        if (res.statusCode === 200) {
+          that.setState({
+            cate3: res.data
+          });
+        }
+      });
+    }
+    // 三级分类
+
+  }, {
+    key: "_cate3",
+    value: function _cate3(cate_3) {
+      var that = this;
+      _api2.default.get(_inter2.default.saveAttrInfo, {
+        catalog3Id: cate_3.id
       });
     }
   }, {
@@ -137,9 +203,13 @@ var Index = (_temp2 = _class = function (_BaseComponent) {
       var __prefix = this.$prefix;
       ;
 
-      var personList = this.__state.personList;
+      var _state = this.__state,
+          personList = _state.personList,
+          cate1 = _state.cate1,
+          cate2 = _state.cate2,
+          cate3 = _state.cate3;
 
-      var loopArray54 = personList.map(function (person, index) {
+      var loopArray138 = personList.map(function (person, index) {
         person = {
           $original: (0, _index.internal_get_original)(person)
         };
@@ -149,33 +219,55 @@ var Index = (_temp2 = _class = function (_BaseComponent) {
           $original: person.$original
         };
       });
+      var loopArray139 = cate1.map(function (cate_1, index) {
+        cate_1 = {
+          $original: (0, _index.internal_get_original)(cate_1)
+        };
+        var $loopState__temp4 = 'cate_1' + index;
+        return {
+          $loopState__temp4: $loopState__temp4,
+          $original: cate_1.$original
+        };
+      });
+      var loopArray140 = cate2.map(function (cate_2, index) {
+        cate_2 = {
+          $original: (0, _index.internal_get_original)(cate_2)
+        };
+        var $loopState__temp6 = 'cate_1' + index;
+        return {
+          $loopState__temp6: $loopState__temp6,
+          $original: cate_2.$original
+        };
+      });
+      var loopArray141 = cate3.map(function (cate_3, index) {
+        cate_3 = {
+          $original: (0, _index.internal_get_original)(cate_3)
+        };
+        var $loopState__temp8 = 'cate_1' + index;
+        return {
+          $loopState__temp8: $loopState__temp8,
+          $original: cate_3.$original
+        };
+      });
       Object.assign(this.__state, {
-        loopArray54: loopArray54
+        loopArray138: loopArray138,
+        loopArray139: loopArray139,
+        loopArray140: loopArray140,
+        loopArray141: loopArray141
       });
       return this.__state;
     }
   }]);
 
   return Index;
-}(_index.Component), _class.$$events = ["_onEdit", "_onDelete", "_onAdd"], _class.$$componentPath = "pages/index/index", _temp2);
-Index = (0, _tslib.__decorate)([(0, _index3.connect)(function (_ref2) {
-  var home = _ref2.home;
-  return {
-    home: home
-  };
-}, function (dispatch) {
-  return {
-    getPerson: function getPerson() {
-      dispatch((0, _home.getPerson)());
-    }
-  };
-})], Index);
+}(_index.Component), _class.$$events = ["_onEdit", "_onDelete", "_onAdd", "_cate1", "_cate2", "_cate3"], _class.$$componentPath = "pages/index/index", _temp2);
 // #region 导出注意
 //
 // 经过上面的声明后需要将导出的 Taro.Component 子类修改为子类本身的 props 属性
 // 这样在使用这个子类时 Ts 才不会提示缺少 JSX 类型参数错误
 //
 // #endregion
+
 exports.default = Index;
 
 Component(require('../../npm/@tarojs/taro-weapp/index.js').default.createComponent(Index, true));

@@ -3,10 +3,22 @@
         <view class="d_flex fd_c pl_20 pr_20">
             <view class="d_flex fd_r "><text class="c33_label default_label pt_10 pb_10 col_1 textCenter">{{'姓名'}}</text><text class="c33_label default_label pt_10 pb_10 col_1 textCenter">{{'年龄'}}</text><text class="c33_label default_label pt_10 pb_10 col_1 textCenter">{{'修改'}}</text><text class="c33_label default_label pt_10 pb_10 col_1 textCenter">{{'操作'}}</text>
             </view>
-            <view wx:key="$loopState__temp2" class="d_flex fd_r ai_ct  " wx:for="{{loopArray54}}" wx:for-item="person" wx:for-index="index"><text class="c33_label default_label pt_10 pb_10 col_1 textCenter">{{person.$original.name}}</text><text class="c33_label default_label pt_10 pb_10 col_1 textCenter">{{person.$original.age}}</text><text class="c33_label default_label pt_10 pb_10 col_1 textCenter" bindtap="_onEdit" data-e-tap-so="this" data-e-tap-a-a="{{person.$original}}" data-e-tap-a-b="{{person.$original.id}}">{{'编辑'}}</text><text class="c33_label default_label pt_10 pb_10 col_1 textCenter" bindtap="_onDelete">{{'删除'}}</text>
+            <view wx:key="$loopState__temp2" class="d_flex fd_r ai_ct  " wx:for="{{loopArray138}}" wx:for-item="person" wx:for-index="index"><text class="c33_label default_label pt_10 pb_10 col_1 textCenter">{{person.$original.name}}</text><text class="c33_label default_label pt_10 pb_10 col_1 textCenter">{{person.$original.age}}</text><text class="c33_label default_label pt_10 pb_10 col_1 textCenter" bindtap="_onEdit" data-e-tap-so="this" data-e-tap-a-a="{{person.$original}}" data-e-tap-a-b="{{person.$original.id}}">{{'编辑'}}</text><text class="c33_label default_label pt_10 pb_10 col_1 textCenter" bindtap="_onDelete">{{'删除'}}</text>
             </view>
         </view>
         <view class="btn bg_fa d_flex fd_r ai_ct jc_ct mt_20" bindtap="_onAdd"><text class="white_label default_label">增加</text>
+        </view>
+        <view class="d_flex fd_c ">
+            <view class="d_flex fd_r"><text class="c33_label default_label pt_10 pb_10 col_1 textCenter">{{'一级'}}</text><text class="c33_label default_label pt_10 pb_10 col_1 textCenter">{{'二级'}}</text><text class="c33_label default_label pt_10 pb_10 col_1 textCenter">{{'三级'}}</text>
+            </view>
+            <view class="d_flex fd_r">
+                <view class="col_1 d_flex fd_c"><text wx:key="$loopState__temp4" bindtap="_cate1" class="sm_label " wx:for="{{loopArray139}}" wx:for-item="cate_1" wx:for-index="index" data-e-tap-so="this" data-e-tap-a-a="{{cate_1.$original}}">{{cate_1.$original.name}}</text>
+                </view>
+                <view class="col_1 d_flex fd_c"><text wx:key="$loopState__temp6" bindtap="_cate2" class="sm_label " wx:for="{{loopArray140}}" wx:for-item="cate_2" wx:for-index="index" data-e-tap-so="this" data-e-tap-a-a="{{cate_2.$original}}">{{cate_2.$original.name}}</text>
+                </view>
+                <view class="col_1  d_flex fd_c"><text wx:key="$loopState__temp8" class="sm_label " bindtap="_cate3" wx:for="{{loopArray141}}" wx:for-item="cate_3" wx:for-index="index" data-e-tap-so="this" data-e-tap-a-a="{{cate_3.$original}}">{{cate_3.$original.name}}</text>
+                </view>
+            </view>
         </view>
     </view>
 </block>

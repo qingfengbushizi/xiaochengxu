@@ -46,6 +46,22 @@ type PageState = {
         id:number,
         name:string,
         age:number
+    }>,
+    cate1:Array<{
+        catalog2s: string,
+        id: string,
+        name: string,
+    }>,
+    cate2:Array<{
+        catalog1Id:number,
+        catalog3List:Array<null>,
+        id:number,
+        name:string
+    }>,
+    cate3:Array<{
+        catalog2Id:number,
+        id:number,
+        name:string
     }>
 }
 
@@ -65,6 +81,24 @@ interface Index {
 
 }))
 
+var Anim = function(){
+        
+}
+Anim.prototype.start = function(){
+    console.log('satrt');
+}
+
+Anim.prototype.stop = function(){
+    console.log('stop');
+}
+
+var myAnim = new Anim();
+myAnim.start();
+myAnim.stop();
+
+
+
+
 
 class Index extends Component<{}, PageState>{
 
@@ -83,7 +117,10 @@ class Index extends Component<{}, PageState>{
         super(...arguments)
 
         this.state = {
-            personList:[]
+            personList:[],
+            cate1:[],
+            cate2:[],
+            cate3:[],
         }
     }
 
@@ -96,30 +133,91 @@ class Index extends Component<{}, PageState>{
 
     componentDidMount(){
         var that = this;
-        that.props.getPerson();
+        // that.props.getPerson();
     }
 
     componentDidShow () { 
         var that = this
-        that.getPerson();
+        // that.getPerson();
+        that.getCate1();
     }
 
     componentDidHide () { }
 
-    getPerson(){
-        var that = this
+    // getPerson(){
+    //     var that = this
         
-        api.get(inter.person)
+    //     api.get(inter.person)
+    //     .then((res)=>{
+    //         if(res.statusCode === 200){
+    //             that.setState({
+    //                 personList:res.data
+    //             })
+    //         }
+    //     })
+
+    // }
+
+    getCate1(){
+        var that = this;
+        api.get(inter.cate1)
         .then((res)=>{
             if(res.statusCode === 200){
                 that.setState({
-                    personList:res.data
+                    cate1:res.data
+                },()=>{
+                    that._cate1(res.data[0]);
                 })
             }
         })
-
     }
 
+
+    //一级分类             
+    _cate1(cate_1){
+        var that = this;
+
+        
+        api.get(inter.cate2,{
+            catalog1Id:cate_1.id
+        }).then((res)=>{
+            if(res.statusCode === 200){
+                that.setState({
+                    cate2:res.data
+                },()=>{
+                    that._cate2(res.data[0]);
+                })
+            }
+        })
+    }
+
+
+    // 二级分类
+    _cate2(cate_2){
+        var that = this;
+        
+        api.get(inter.cate3,{
+            catalog2Id:cate_2.id
+        }).then((res)=>{
+            if(res.statusCode === 200){
+                that.setState({
+                    cate3:res.data
+                })
+            }
+        })
+    }
+
+
+    // 三级分类
+    _cate3(cate_3){
+        var that = this;
+
+        api.get(inter.saveAttrInfo,{
+            catalog3Id:cate_3.id
+        })
+    }
+
+    
 
     _onAdd(){
         Taro.navigateTo({
@@ -139,7 +237,7 @@ class Index extends Component<{}, PageState>{
 
     render () {
 
-        const {personList} = this.state
+        const {personList,cate1,cate2,cate3} = this.state
 
         return (
             <View className='index'>
@@ -166,6 +264,50 @@ class Index extends Component<{}, PageState>{
 
                 <View className='btn bg_fa d_flex fd_r ai_ct jc_ct mt_20' onClick={this._onAdd}>
                     <Text className='white_label default_label'>增加</Text>
+                </View>
+
+                <View className='d_flex fd_c '>
+                    <View className='d_flex fd_r'>
+                        <Text className='c33_label default_label pt_10 pb_10 col_1 textCenter'>{'一级'}</Text>
+                        <Text className='c33_label default_label pt_10 pb_10 col_1 textCenter'>{'二级'}</Text>
+                        <Text className='c33_label default_label pt_10 pb_10 col_1 textCenter'>{'三级'}</Text>
+                    </View> 
+                    <View className='d_flex fd_r'>
+                        <View className='col_1 d_flex fd_c'>
+                            {
+                                cate1.map((cate_1,index)=>{
+                                    return(
+                                        <Text key={'cate_1' + index} onClick={this._cate1.bind(this,cate_1)} className='sm_label '>
+                                            {cate_1.name}
+                                        </Text>
+                                    )
+                                })
+                            }
+                        </View>
+                        <View className='col_1 d_flex fd_c'>
+                            {
+                                cate2.map((cate_2,index)=>{
+                                    return(
+                                        <Text key={'cate_1' + index} onClick={this._cate2.bind(this,cate_2)} className='sm_label '>
+                                            {cate_2.name}
+                                        </Text>
+                                    )
+                                })
+                            }
+                        </View>
+                        <View className="col_1  d_flex fd_c">
+                            {
+                                cate3.map((cate_3,index)=>{
+                                    return(
+                                        <Text key={'cate_1' + index}  className='sm_label ' onClick={this._cate3.bind(this,cate_3)}>
+                                            {cate_3.name}
+                                        </Text>
+                                    )
+                                })
+                            }
+                        </View>
+                    </View>
+                   
                 </View>
             </View>
         )
