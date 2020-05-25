@@ -226,7 +226,7 @@ class Index extends Component<{}, PageState>{
     }
 
     _onDelete(){
-
+        console.log('nihao')
     }
 
     _onEdit(person,id){
